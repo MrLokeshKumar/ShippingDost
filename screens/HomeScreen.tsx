@@ -1,14 +1,26 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, {useState} from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Button } from 'react-native-paper';
 
+import ImagePickerComponent from "../components/ImagePicker";
+
+const handleImageSelect = (uri: string) => {
+  alert(uri)
+};
+
 export default function HomeScreen() {
+  const [modalVisible, setModalVisible] = useState(false);
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Welcome to Shipping Dost App!</Text>
-      <Button mode="contained" style={styles.button}>
+      <Button mode="contained" style={styles.button} onPress={() => {
+        setModalVisible(true);
+      }}>
+        <Text>
         Start Your Delivery
+        </Text>
       </Button>
+      <ImagePickerComponent onSelectImage={handleImageSelect} modalVisible={modalVisible} setModalVisible={setModalVisible}/>
     </View>
   );
 }

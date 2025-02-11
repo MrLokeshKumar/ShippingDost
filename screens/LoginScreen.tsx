@@ -21,8 +21,8 @@ const LoginScreen: React.FC = () => {
   const navigation = useNavigation<LoginScreenNavigationProp>();
 
   // Dummy credentials
-  const validEmail = "user@test.com";
-  const validMobileNumber = "123456";
+  const validEmail = "a";
+  const validMobileNumber = "1";
 
   const handleLogin = () => {
     if (email === validEmail && mobileNumber === validMobileNumber) {
