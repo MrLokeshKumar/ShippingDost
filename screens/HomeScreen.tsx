@@ -1,17 +1,24 @@
 import React, {useState} from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import { Button } from 'react-native-paper';
 
 import ImagePickerComponent from "../components/ImagePicker";
 
-const handleImageSelect = (uri: string) => {
-  alert(uri)
-};
+
 
 export default function HomeScreen() {
   const [modalVisible, setModalVisible] = useState(false);
+  const [imageUri, setImageUri] = useState(null);
+
+  const handleImageSelect = (uri: string) => {
+    setImageUri(uri);
+  };
+
   return (
     <View style={styles.container}>
+      {imageUri && (
+        <Image source={{ uri: imageUri }} style={styles.imagePreview} />
+      )}
       <Text style={styles.title}>Welcome to Shipping Dost App!</Text>
       <Button mode="contained" style={styles.button} onPress={() => {
         setModalVisible(true);
@@ -40,5 +47,11 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 16,
     backgroundColor: '#003B73',
+  },
+  imagePreview: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    marginBottom: 16,
   },
 });

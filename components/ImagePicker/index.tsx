@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, AntDesign } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 
 export default function ImagePickerComponent({modalVisible,  onSelectImage, setModalVisible}) {
@@ -54,7 +54,7 @@ export default function ImagePickerComponent({modalVisible,  onSelectImage, setM
                   style={styles.optionButton}
                   onPress={handleImageUpload}
                 >
-                  <Ionicons name="cloud-upload-outline" size={20} color="#FFFFFF" />
+                  <AntDesign name="upload" size={20} color="#FFFFFF" />
                 </TouchableOpacity>
                 <Text style={styles.optionText}>Upload Photo</Text>
               </View>
