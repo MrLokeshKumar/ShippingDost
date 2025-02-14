@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 import {
   TextInput,
   HelperText,
   Portal,
   Modal,
   List,
+  Menu,
+  Button,
 } from "react-native-paper";
 import {
   type Control,
@@ -31,6 +33,7 @@ interface CommonInputProps<T extends FieldValues> {
   secureTextEntry?: boolean;
   multiline?: boolean;
   numberOfLines?: number;
+  labelPosition?: "floating" | "outside";
 }
 
 export function CommonInput<T extends FieldValues>({
@@ -45,9 +48,14 @@ export function CommonInput<T extends FieldValues>({
   secureTextEntry = false,
   multiline = false,
   numberOfLines = 1,
+  labelPosition = "outside",
 }: CommonInputProps<T>) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [visible, setVisible] = useState(false);
+
+  const openMenu = () => setVisible(true);
+  const closeMenu = () => setVisible(false);
 
   const renderInput = ({
     field: { value, onChange, onBlur },
@@ -56,41 +64,42 @@ export function CommonInput<T extends FieldValues>({
     field: { value: any; onChange: (value: any) => void; onBlur: () => void };
     fieldState: { error?: any };
   }) => {
+    const inputLabel = labelPosition === "floating" ? label : "";
+
     switch (type) {
       case "dropdown":
         return (
           <View>
-            <TextInput
-              value={
-                value ? options.find((opt) => opt.value === value)?.label : ""
+            {labelPosition === "outside" && <Text style={styles.outsideLabel}>{label}</Text>}
+            <Menu
+              visible={visible}
+              onDismiss={closeMenu}
+              anchor={
+                <TextInput
+                  value={value ? options.find(option => option.value === value)?.label : ""}
+                  onFocus={openMenu}
+                  label={inputLabel}
+                  placeholder={placeholder}
+                  disabled={disabled}
+                  error={!!error}
+                  mode="outlined"
+                  style={styles.input}
+                  right={<TextInput.Icon icon="menu-down" />}
+                />
               }
-              onFocus={() => setShowDropdown(true)}
-              label={label}
-              placeholder={placeholder}
-              disabled={disabled}
-              error={!!error}
-              mode="outlined"
-              right={<TextInput.Icon icon="chevron-down" />}
-              style={styles.input}
-            />
-            <Portal>
-              <Modal
-                visible={showDropdown}
-                onDismiss={() => setShowDropdown(false)}
-                contentContainerStyle={styles.modal}
-              >
-                {options.map((option) => (
-                  <List.Item
-                    key={option.value}
-                    title={option.label}
-                    onPress={() => {
-                      onChange(option.value);
-                      setShowDropdown(false);
-                    }}
-                  />
-                ))}
-              </Modal>
-            </Portal>
+            >
+              {options.map(option => (
+                <Menu.Item
+                  key={option.value}
+                  onPress={() => {
+                    onChange(option.value);
+                    closeMenu();
+                    onBlur(); // Lose focus after selecting an option
+                  }}
+                  title={option.label}
+                />
+              ))}
+            </Menu>
             {error && (
               <HelperText type="error" visible={true}>
                 {error?.message}
@@ -102,11 +111,12 @@ export function CommonInput<T extends FieldValues>({
       case "textarea":
         return (
           <View>
+            {labelPosition === "outside" && <Text style={styles.outsideLabel}>{label}</Text>}
             <TextInput
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}
-              label={label}
+              label={inputLabel}
               placeholder={placeholder}
               disabled={disabled}
               error={!!error}
@@ -126,10 +136,11 @@ export function CommonInput<T extends FieldValues>({
       case "date":
         return (
           <View>
+            {labelPosition === "outside" && <Text style={styles.outsideLabel}>{label}</Text>}
             <TextInput
               value={value ? new Date(value).toLocaleDateString() : ""}
               onFocus={() => setShowDatePicker(true)}
-              label={label}
+              label={inputLabel}
               placeholder={placeholder}
               disabled={disabled}
               error={!!error}
@@ -147,11 +158,12 @@ export function CommonInput<T extends FieldValues>({
       default:
         return (
           <View>
+            {labelPosition === "outside" && <Text style={styles.outsideLabel}>{label}</Text>}
             <TextInput
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}
-              label={label}
+              label={inputLabel}
               placeholder={placeholder}
               disabled={disabled}
               error={!!error}
@@ -182,6 +194,15 @@ export function CommonInput<T extends FieldValues>({
 const styles = StyleSheet.create({
   input: {
     marginBottom: 4,
+  },
+  outsideLabel: {
+    marginBottom: 4,
+    color: "#666",
+    fontFamily: "Outfit",
+    fontWeight: "400",
+    fontSize: 16,
+    lineHeight: 24,
+    letterSpacing: 0,
   },
   textarea: {
     marginBottom: 4,
